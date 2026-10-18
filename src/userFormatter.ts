@@ -11,12 +11,9 @@ export interface UserRecord {
 }
 
 /**
- * Formats a raw UserRecord into a display-friendly string.
- * Signature: formatUser(user: UserRecord): string
- *
- * WARNING: myco-demo-api-service imports this with exactly this signature.
- * Changing the parameter name or type is a breaking change.
+ * RENAMED from formatUser -> formatUserDisplay (BREAKING CHANGE)
+ * myco-demo-api-service still imports `formatUser` — this will break its build.
  */
-export function formatUser(user: UserRecord): string {
-  return `${user.firstName} ${user.lastName} <${user.email}>`;
+export function formatUserDisplay(user: UserRecord): string {
+  return `[User] ${user.firstName} ${user.lastName} <${user.email}>`;
 }

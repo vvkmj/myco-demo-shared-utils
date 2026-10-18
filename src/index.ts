@@ -1,10 +1,11 @@
 /**
- * @myco-demo/shared-utils — Public API
+ * @myco-demo/shared-utils — Public API (refactored)
  *
- * All exports in this file are consumed by myco-demo-api-service.
- * Renaming or removing them is a BREAKING CHANGE across repos.
+ * BREAKING CHANGES in this version:
+ * - formatUser renamed to formatUserDisplay
+ * - generateOrderId removed (use uuid library directly)
  */
 
-export { formatUser, UserRecord } from "./userFormatter";
+export { formatUserDisplay, UserRecord } from "./userFormatter";
 export { calculateTax, TaxResult } from "./taxCalculator";
-export { generateOrderId } from "./orderUtils";
+export { formatOrderSummary } from "./orderUtils";
