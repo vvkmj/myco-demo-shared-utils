@@ -1,11 +1,9 @@
 /**
- * Generates a unique order ID with a timestamp prefix.
- * Consumed by myco-demo-api-service in src/routes/orders.ts
- *
- * Signature: generateOrderId(): string
+ * Order utilities.
+ * NOTE: generateOrderId has been removed in this refactor.
+ * myco-demo-api-service still imports generateOrderId — this will break its build.
  */
-export function generateOrderId(): string {
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 7).toUpperCase();
-  return `ORD-${timestamp}-${random}`;
+
+export function formatOrderSummary(items: string[]): string {
+  return items.map((item, i) => `${i + 1}. ${item}`).join("\n");
 }
