@@ -31,4 +31,4 @@ jobs:
             }
           metrics_endpoint: ${{ secrets.METRICS_ENDPOINT || 'https://example.com/metrics' }}
           metrics_api_key: ${{ secrets.METRICS_API_KEY || 'placeholder' }}
-          client_id: ${{ vars.MYCO_CLIENT_ID || 'myco-demo' }}
+          client_id: placement-preparation-buddy
