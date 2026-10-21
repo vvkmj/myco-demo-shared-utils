@@ -15,7 +15,7 @@ export interface TaxResult {
  *
  * myco-demo-api-service calls this as: calculateTax(order.subtotal, 8.5)
  */
-export function calculateTax(subtotal: number, taxRatePercent: number): TaxResult {
+export function calculateTax(subtotal: number, taxRatePercent: number, currency: string): TaxResult {
   const taxAmount = parseFloat(((subtotal * taxRatePercent) / 100).toFixed(2));
   return {
     subtotal,
