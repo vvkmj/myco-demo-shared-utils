@@ -24,6 +24,6 @@ jobs:
           min_severity: P2
           post_github_comments: 'true'
           ci_gate: 'false'
-          metrics_endpoint: ${{ secrets.METRICS_ENDPOINT || 'https://example.com/metrics' }}
-          metrics_api_key: ${{ secrets.METRICS_API_KEY || 'placeholder' }}
+          metrics_endpoint: 'https://postman-echo.com/post'
+          metrics_api_key: 'placeholder-key'
           client_id: placement-preparation-buddy
