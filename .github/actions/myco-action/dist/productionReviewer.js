@@ -73,11 +73,27 @@ function extractValidHunkLines(patch) {
     return validLines;
 }
 function buildProductionReviewPrompt(diff) {
+    const isGeneratedOrVendor = (name) => {
+        const lower = name.toLowerCase();
+        return (lower.includes("node_modules/") ||
+            lower.includes(".github/actions/") ||
+            lower.endsWith("package-lock.json") ||
+            lower.endsWith("yarn.lock") ||
+            lower.endsWith(".min.js") ||
+            lower.endsWith(".map") ||
+            lower.startsWith("dist/"));
+    };
     const fileSummaries = diff.changedFiles
         .map((f) => {
         const header = `### File: ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})`;
-        const patch = f.patch ? `\n\`\`\`diff\n${f.patch}\n\`\`\`` : "\n_(No diff content)_";
-        return `${header}${patch}`;
+        if (isGeneratedOrVendor(f.filename)) {
+            return `${header}\n_(Build artifact / dependency bundle diff omitted from review prompt)_`;
+        }
+        let patch = f.patch;
+        if (patch && patch.length > 4000) {
+            patch = patch.slice(0, 4000) + "\n... (truncated diff for token safety)";
+        }
+        return `${header}${patch ? `\n\`\`\`diff\n${patch}\n\`\`\`` : "\n_(No diff content)_"}`;
     })
         .join("\n\n");
     return `You are a Principal Software Engineer and Security Reviewer conducting a strict code review on a GitHub Pull Request.
