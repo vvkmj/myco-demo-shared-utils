@@ -1,0 +1,71 @@
+name: "MyCo AI Code Review"
+description: "Autonomous customer-side AI code review for GitHub Pull Requests. Source code never leaves your runner."
+author: "MyCo Intelligence"
+branding:
+  icon: "check-circle"
+  color: "purple"
+
+inputs:
+  myco-llm-api-key:
+    description: "Customer LLM API Key (OpenAI, Anthropic, or OpenAI-compatible provider) stored in GitHub Secrets"
+    required: true
+  myco-llm-provider:
+    description: "AI Provider ('openai' or 'anthropic')"
+    required: false
+    default: "openai"
+  myco-llm-model:
+    description: "Model override (e.g. 'gpt-4o', 'claude-3-5-sonnet-20241022', 'openai/gpt-oss-120b')"
+    required: false
+    default: "gpt-4o"
+  myco-llm-base-url:
+    description: "Optional custom OpenAI-compatible API base URL (e.g. 'https://api.groq.com/openai/v1')"
+    required: false
+    default: "https://api.openai.com/v1"
+  github-token:
+    description: "GitHub Token for posting review findings (defaults to workflow GITHUB_TOKEN)"
+    required: false
+    default: ${{ github.token }}
+  pr-link:
+    description: "Target Pull Request URL (automatically detected from event)"
+    required: false
+    default: ${{ github.event.pull_request.html_url }}
+  ci-gate:
+    description: "Whether to fail the CI workflow step if merge-blocking findings are detected (default: 'false')"
+    required: false
+    default: "false"
+  gate-min-severity:
+    description: "Minimum severity that counts as merge-blocking ('BLOCKER' or 'P1')"
+    required: false
+    default: "P1"
+  demo-mode:
+    description: "Execute in deterministic demo mode without contacting external LLM (requires explicit 'true')"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Install Action Dependencies"
+      shell: bash
+      run: |
+        cd "${{ github.action_path }}"
+        if [ ! -d "node_modules" ]; then
+          npm install --omit=dev
+        fi
+
+    - name: "Run MyCo Review Engine"
+      shell: bash
+      env:
+        MYCO_LLM_API_KEY: ${{ inputs.myco-llm-api-key }}
+        MYCO_LLM_PROVIDER: ${{ inputs.myco-llm-provider }}
+        MYCO_LLM_MODEL: ${{ inputs.myco-llm-model }}
+        MYCO_LLM_BASE_URL: ${{ inputs.myco-llm-base-url }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PR_LINK: ${{ inputs.pr-link }}
+        CI_GATE: ${{ inputs.ci-gate }}
+        GATE_MIN_SEVERITY: ${{ inputs.gate-min-severity }}
+        MYCO_DEMO_MODE: ${{ inputs.demo-mode }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_RUN_ID: ${{ github.run_id }}
+      run: |
+        node "${{ github.action_path }}/dist/index.js"

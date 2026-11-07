@@ -24,3 +24,14 @@ export function calculateTax(subtotal: number, taxRatePercent: number): TaxResul
     taxRate: taxRatePercent,
   };
 }
+
+/**
+ * Calculates shipping tax based on base shipping cost and rate.
+ * Signature: calculateShippingTax(shippingCost: number, taxRatePercent?: number): number
+ */
+export function calculateShippingTax(shippingCost: number, taxRatePercent = 0): number {
+  if (shippingCost < 0) {
+    throw new Error("Shipping cost cannot be negative");
+  }
+  return parseFloat(((shippingCost * taxRatePercent) / 100).toFixed(2));
+}
