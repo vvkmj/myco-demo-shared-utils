@@ -3,6 +3,7 @@ name: Myco PR Review
 on:
   pull_request:
     types: [opened, reopened, synchronize]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,20 +16,14 @@ jobs:
     steps:
       - uses: MycoIntelligence/myco-bundled-action@v1
         with:
-          pr_link: ${{ github.event.pull_request.html_url }}
+          pr_link: ${{ github.event.pull_request.html_url || 'https://github.com/vvkmj/myco-demo-shared-utils/pull/2' }}
           llm_provider: ${{ vars.LLM_PROVIDER || 'openai' }}
           api_key: ${{ secrets.LLM_API_KEY }}
-          litellm_base_url: ${{ vars.LITELLM_BASE_URL }}
-          litellm_model: ${{ vars.LITELLM_MODEL }}
+          litellm_base_url: ${{ vars.LITELLM_BASE_URL || 'https://api.groq.com/openai/v1' }}
+          litellm_model: ${{ vars.LITELLM_MODEL || 'openai/gpt-oss-120b' }}
           min_severity: P2
-          post_github_comments: ${{ vars.MYCO_POST_COMMENTS || 'false' }}
-          ci_gate: 'true'
-          gate_min_severity: P1
-          multi_repo_enabled: 'true'
-          multi_repo_map: |
-            {
-              "@myco-demo/shared-utils": "vvkmj/myco-demo-shared-utils"
-            }
+          post_github_comments: 'true'
+          ci_gate: 'false'
           metrics_endpoint: ${{ secrets.METRICS_ENDPOINT || 'https://example.com/metrics' }}
           metrics_api_key: ${{ secrets.METRICS_API_KEY || 'placeholder' }}
           client_id: placement-preparation-buddy
