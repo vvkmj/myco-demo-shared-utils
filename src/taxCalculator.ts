@@ -24,3 +24,10 @@ export function calculateTax(subtotal: number, taxRatePercent: number): TaxResul
     taxRate: taxRatePercent,
   };
 }
+
+export function calculateDiscount(amount: number, discountPercent: number): number {
+  if (discountPercent < 0 || discountPercent > 100) {
+    throw new Error("Invalid discount percentage");
+  }
+  return amount * (1 - discountPercent / 100);
+}
