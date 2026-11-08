@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 2 # Required to compare HEAD with base branch
 
       - name: "Run MyCo Review Action"
-        uses: vvkmj/myco-action@v1
+        uses: MycoIntelligence/myco-bundled-action@v1
         with:
           myco-llm-api-key: ${{ secrets.MYCO_LLM_API_KEY || secrets.LLM_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
