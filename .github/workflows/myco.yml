@@ -1,34 +1,39 @@
-name: Myco PR Review
+name: "MyCo AI Code Review"
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  workflow_dispatch:
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: read         # Reads repository diff and context on this runner
+  pull-requests: write   # Publishes review findings and inline comments
+
+concurrency:
+  group: myco-review-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  review:
-    name: Myco review
+  myco-review:
+    name: "MyCo SDET Review"
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft != true
     steps:
-      - uses: MycoIntelligence/myco-bundled-action@v1
+      - name: "Checkout Target Repository"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          pr_link: ${{ github.event.pull_request.html_url }}
-          llm_provider: ${{ vars.LLM_PROVIDER || 'openai' }}
-          api_key: ${{ secrets.LLM_API_KEY }}
-          litellm_base_url: ${{ vars.LITELLM_BASE_URL }}
-          litellm_model: ${{ vars.LITELLM_MODEL }}
-          min_severity: P2
-          post_github_comments: ${{ vars.MYCO_POST_COMMENTS || 'false' }}
-          ci_gate: 'true'
-          gate_min_severity: P1
-          multi_repo_enabled: 'true'
-          multi_repo_map: |
-            {
-              "@myco-demo/shared-utils": "vvkmj/myco-demo-shared-utils"
-            }
-          metrics_endpoint: ${{ secrets.METRICS_ENDPOINT || 'https://example.com/metrics' }}
-          metrics_api_key: ${{ secrets.METRICS_API_KEY || 'placeholder' }}
-          client_id: placement-preparation-buddy
+          fetch-depth: 2 # Required to compare HEAD with base branch
+
+      - name: "Run MyCo Review Action"
+        uses: vvkmj/myco-action@v1
+        with:
+          myco-llm-api-key: ${{ secrets.MYCO_LLM_API_KEY || secrets.LLM_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          myco-llm-provider: ${{ vars.MYCO_LLM_PROVIDER || 'openai' }}
+          myco-llm-model: ${{ vars.MYCO_LLM_MODEL || '' }}
+          ci-gate: 'false'
+          gate-min-severity: 'P1'
