@@ -33,7 +33,18 @@ jobs:
         with:
           myco-llm-api-key: ${{ secrets.MYCO_LLM_API_KEY || secrets.LLM_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          myco-llm-provider: ${{ vars.MYCO_LLM_PROVIDER || 'openai' }}
-          myco-llm-model: ${{ vars.MYCO_LLM_MODEL || '' }}
+          myco-llm-provider: ${{ vars.MYCO_LLM_PROVIDER || vars.LLM_PROVIDER || 'openai' }}
+          myco-llm-model: ${{ vars.MYCO_LLM_MODEL || vars.LLM_MODEL || 'openai/gpt-oss-120b' }}
+          myco-llm-base-url: ${{ vars.MYCO_LLM_BASE_URL || vars.LITELLM_BASE_URL || 'https://api.groq.com/openai/v1' }}
           ci-gate: 'false'
           gate-min-severity: 'P1'
+          pr_link: ${{ github.event.pull_request.html_url }}
+          api_key: ${{ secrets.MYCO_LLM_API_KEY || secrets.LLM_API_KEY }}
+          llm_provider: ${{ vars.MYCO_LLM_PROVIDER || vars.LLM_PROVIDER || 'openai' }}
+          litellm_base_url: ${{ vars.MYCO_LLM_BASE_URL || vars.LITELLM_BASE_URL || 'https://api.groq.com/openai/v1' }}
+          litellm_model: ${{ vars.MYCO_LLM_MODEL || vars.LLM_MODEL || 'openai/gpt-oss-120b' }}
+          min_severity: 'P2'
+          post_github_comments: 'true'
+          metrics_endpoint: ${{ secrets.METRICS_ENDPOINT || 'https://postman-echo.com/post' }}
+          metrics_api_key: ${{ secrets.METRICS_API_KEY || 'placeholder-key' }}
+          client_id: ${{ vars.CLIENT_ID || 'placement-preparation-buddy' }}
